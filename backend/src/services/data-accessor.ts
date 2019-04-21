@@ -1,6 +1,6 @@
 import { DatabaseService } from '../services/database.service';
 
-export abstract class DatabaseController {
+export abstract class DataAccessor {
 
   protected databaseService: DatabaseService;
 

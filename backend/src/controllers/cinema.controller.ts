@@ -1,37 +1,46 @@
-import { Db, MongoError } from 'mongodb';
+import express = require('express');
 
+import { CinemaService } from '../services/cinema.service';
 import { Hall } from '../models/hall';
-import { DatabaseController } from './database.controller';
 
-export class CinemaController extends DatabaseController {
+export class CinemaController {
 
-  async getAllHalls(): Promise<Hall[] | MongoError> {
-    return this.databaseService
-      .getConnection()
+  private cinemaService = new CinemaService();
+
+  getAllHalls(req: express.Request, res: express.Response) {
+    this
+      .cinemaService
+      .getAllHalls()
       .then(
-        (db: Db) => {
-          return db
-            .collection('halls')
-            .find()
-            .toArray();
+        (data: any[]) => {
+          res.json(data);
         },
-        (error: MongoError) => {
-          return error;
+        (error: Error) => {
+          console.log('erorr:', error);
+
+          res.status(500).json({
+            error
+          });
         }
-      )
+      );
   }
 
-  async addHall(hall: Hall): Promise<any | MongoError> {
-    return this.databaseService
-      .getConnection()
+  addHall(req: express.Request, res: express.Response) {
+    const hall: Hall = req.body;
+
+    this
+      .cinemaService
+      .addHall(hall)
       .then(
-        (db: Db) => {
-          return db
-            .collection('halls')
-            .insertOne(hall);
+        (data: any) => {
+          res.json({
+            success: true
+          });
         },
-        (error: MongoError) => {
-          return error;
+        (error: Error) => {
+          res.status(500).json({
+            error
+          });
         }
       );
   }

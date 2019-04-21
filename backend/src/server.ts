@@ -1,48 +1,16 @@
 import * as express from 'express';
-import { CinemaController } from './controllers/cinema.controller';
-import { Hall } from './models/hall';
 import bodyParser = require('body-parser');
+
+import { CinemaController } from './controllers/cinema.controller';
 
 const app = express();
 
 app.use(bodyParser.json());
 
-let cinemaCtrl = new CinemaController();
+const cinemaCtrl = new CinemaController();
 
-app.get('/halls', (req, res) => {
-  cinemaCtrl
-    .getAllHalls()
-    .then(
-      (data: any[]) => {
-        res.json(data);
-      },
-      (error: Error) => {
-        console.log('erorr:', error);
-        res.status(500).json({
-          error
-        });
-      }
-    );
-});
-
-app.put('/halls', (req, res) => {
-  const hall: Hall = req.body;
-
-  cinemaCtrl
-    .addHall(hall)
-    .then(
-      (data: any) => {
-        res.json({
-          success: true
-        });
-      },
-      (error: Error) => {
-        res.status(500).json({
-          error
-        });
-      }
-    );
-});
+app.get('/halls', cinemaCtrl.getAllHalls.bind(cinemaCtrl));
+app.put('/halls', cinemaCtrl.addHall.bind(cinemaCtrl));
 
 const port = process.env.port || 3000;
 
